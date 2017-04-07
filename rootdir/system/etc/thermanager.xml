@@ -5,11 +5,11 @@
 		<resource name="zone1" type="tz">/sys/class/thermal/thermal_zone1</resource>
 		<resource name="zone2" type="tz">/sys/class/thermal/thermal_zone2</resource>
 		<resource name="zone3" type="tz">/sys/class/thermal/thermal_zone3</resource>
-		<resource name="zone4" type="tz">/sys/class/thermal/thermal_zone4</resource>
-		<resource name="zone5" type="tz">/sys/class/thermal/thermal_zone5</resource>
-		<resource name="zone6" type="tz">/sys/class/thermal/thermal_zone6</resource>
-		<resource name="zone7" type="tz">/sys/class/thermal/thermal_zone7</resource>
-		<resource name="zone8" type="tz">/sys/class/thermal/thermal_zone8</resource>
+		<resource name="zone4" type="tz">/sys/class/thermal/thermal_zone4</resource>	<!-- big_core0 -->
+		<resource name="zone5" type="tz">/sys/class/thermal/thermal_zone5</resource>	<!-- big_core1 -->
+		<resource name="zone6" type="tz">/sys/class/thermal/thermal_zone6</resource>	<!-- big_core2 -->
+		<resource name="zone7" type="tz">/sys/class/thermal/thermal_zone7</resource>	<!-- big_core3 -->
+		<resource name="zone8" type="tz">/sys/class/thermal/thermal_zone8</resource>	<!-- small_core -->
 		<resource name="zone9" type="tz">/sys/class/thermal/thermal_zone9</resource>
 		<resource name="zone10" type="tz">/sys/class/thermal/thermal_zone10</resource>
 		<resource name="zone11" type="tz">/sys/class/thermal/thermal_zone11</resource>
@@ -26,11 +26,14 @@
 		<resource name="cpu6" type="sysfs">/sys/devices/system/cpu/cpu6/cpufreq/scaling_max_freq</resource>
 		<resource name="cpu7" type="sysfs">/sys/devices/system/cpu/cpu7/cpufreq/scaling_max_freq</resource>
 
-		<resource name="cpu" type="union">
+		<resource name="cpu-big" type="union">
 			<resource name="cpu0" />
 			<resource name="cpu1" />
 			<resource name="cpu2" />
 			<resource name="cpu3" />
+		</resource>
+
+		<resource name="cpu-little" type="union">
 			<resource name="cpu4" />
 			<resource name="cpu5" />
 			<resource name="cpu6" />
@@ -59,8 +62,8 @@
 		</resource>
 
 		<resource name="temp-cpu" type="union">
-			<resource name="zone0" />
-			<resource name="zone1" />
+<!--			<resource name="zone0" />
+			<resource name="zone1" /> -->
 			<resource name="zone4" />
 			<resource name="zone5" />
 		</resource>
@@ -142,17 +145,27 @@
 		<mitigation level="3"><value resource="shutdown" /></mitigation>
 	</control>
 
-	<control name="cpu">
-		<mitigation level="off"><value resource="cpu">1497600</value></mitigation>
-		<mitigation level="1"><value resource="cpu">1344000</value></mitigation>
-		<mitigation level="2"><value resource="cpu">1113600</value></mitigation>
-		<mitigation level="3"><value resource="cpu">960000</value></mitigation>
-		<mitigation level="4"><value resource="cpu">800000</value></mitigation>
-		<mitigation level="5"><value resource="cpu">533333</value></mitigation>
-		<mitigation level="6"><value resource="cpu">400000</value></mitigation>
-		<mitigation level="7"><value resource="cpu">345600</value></mitigation>
-		<mitigation level="8"><value resource="cpu">200000</value></mitigation>
+	<control name="cpu-big">
+		<mitigation level="off"><value resource="cpu-big">1459200</value></mitigation>
+		<mitigation level="1"><value resource="cpu-big">1344000</value></mitigation>
+		<mitigation level="2"><value resource="cpu-big">1113600</value></mitigation>
+		<mitigation level="3"><value resource="cpu-big">960000</value></mitigation>
+		<mitigation level="4"><value resource="cpu-big">800000</value></mitigation>
+		<mitigation level="5"><value resource="cpu-big">533333</value></mitigation>
+		<mitigation level="6"><value resource="cpu-big">400000</value></mitigation>
+		<mitigation level="7"><value resource="cpu-big">345600</value></mitigation>
+		<mitigation level="8"><value resource="cpu-big">200000</value></mitigation>
 		<mitigation level="9"><value resource="shutdown" /></mitigation>
+	</control>
+
+	<control name="cpu-little">
+ 		<mitigation level="off"><value resource="cpu-little">4:1113600</value></mitigation>
+ 		<mitigation level="1"><value resource="cpu-little">4:998400</value></mitigation>
+ 		<mitigation level="2"><value resource="cpu-little">4:800000</value></mitigation>
+ 		<mitigation level="3"><value resource="cpu-little">4:499200</value></mitigation>
+ 		<mitigation level="4"><value resource="cpu-little">4:249600</value></mitigation>
+ 		<mitigation level="5"><value resource="cpu-little">4:200000</value></mitigation>
+		<mitigation level="6"><value resource="shutdown" /></mitigation>
 	</control>
 
 	<!-- burn-out protection -->
@@ -283,25 +296,32 @@
 	<!-- CPU -->
 	<configuration sensor="temp-cpu">
 		<threshold>
-			<mitigation name="cpu" level="off" />
+			<mitigation name="cpu-big" level="off" />
+			<mitigation name="cpu-little" level="off" />
 		</threshold>
 		<threshold trigger="80" clear="70">
-			<mitigation name="cpu" level="2" />
+			<mitigation name="cpu-big" level="2" />
+			<mitigation name="cpu-little" level="1" />
 		</threshold>
 		<threshold trigger="90" clear="80">
-			<mitigation name="cpu" level="5" />
+			<mitigation name="cpu-big" level="5" />
+			<mitigation name="cpu-little" level="2" />
 		</threshold>
 		<threshold trigger="95" clear="85">
-			<mitigation name="cpu" level="6" />
+			<mitigation name="cpu-big" level="6" />
+			<mitigation name="cpu-little" level="3" />
 		</threshold>
 		<threshold trigger="100" clear="90">
-			<mitigation name="cpu" level="7" />
+			<mitigation name="cpu-big" level="7" />
+			<mitigation name="cpu-little" level="4" />
 		</threshold>
 		<threshold trigger="110" clear="100">
-			<mitigation name="cpu" level="8" />
+			<mitigation name="cpu-big" level="8" />
+			<mitigation name="cpu-little" level="5" />
 		</threshold>
 		<threshold trigger="120" clear="110">
-			<mitigation name="cpu" level="9" />
+			<mitigation name="cpu-big" level="9" />
+			<mitigation name="cpu-little" level="6" />
 		</threshold>
 	</configuration>
 </thermanager>
